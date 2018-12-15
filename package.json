@@ -28,6 +28,9 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   },
+  "dependencies":{
+    "scratch-vm": "github:Robotec-CoderZ/scratch-vm#robotec"
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
