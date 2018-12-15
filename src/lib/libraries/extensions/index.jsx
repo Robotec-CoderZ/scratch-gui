@@ -11,6 +11,7 @@ import translateImage from './translate.png';
 import translateInsetImage from './translate-small.png';
 import microbitImage from './microbit.png';
 import ev3Image from './ev3.png';
+import robotecImage from './robotec_small.png';
 import wedoImage from './wedo.png';
 import text2speechImage from './text2speech.png';
 import text2speechInsetImage from './text2speech-small.svg';
@@ -162,6 +163,35 @@ export default [
         extensionId: 'ev3',
         collaborator: 'LEGO',
         iconURL: ev3Image,
+        insetIconURL: ev3MenuImage,
+        description: (
+            <FormattedMessage
+                defaultMessage="Build interactive robots and more."
+                description="Description for the 'LEGO MINDSTORMS EV3' extension"
+                id="gui.extension.ev3.description"
+            />
+        ),
+        featured: true,
+        disabled: false,
+        bluetoothRequired: true,
+        launchPeripheralConnectionFlow: true,
+        useAutoScan: false,
+        peripheralImage: ev3PeripheralImage,
+        smallPeripheralImage: ev3MenuImage,
+        connectingMessage: (
+            <FormattedMessage
+                defaultMessage="Connecting. Make sure the pin on your EV3 is set to 1234."
+                description="Message to help people connect to their EV3. Must note the PIN should be 1234."
+                id="gui.extension.ev3.connectingMessage"
+            />
+        ),
+        helpLink: 'https://scratch.mit.edu/ev3'
+    },
+    {
+        name: 'Robotec EV3',
+        extensionId: 'robotec',
+        collaborator: 'Robotec',
+        iconURL: robotecImage,
         insetIconURL: ev3MenuImage,
         description: (
             <FormattedMessage
