@@ -38,7 +38,7 @@ import wedo2ConnectionTipIconURL from './wedo2/wedo-button-illustration.svg';
 import boostIconURL from './boost/boost.png';
 import boostInsetIconURL from './boost/boost-small.svg';
 
-import robotecImage from './robotec_small.png';
+import robotecImageURL from './robotec_small.png';
 
 export default [
     {
@@ -224,7 +224,7 @@ export default [
         name: 'Robotec EV3',
         extensionId: 'robotec',
         collaborator: 'Robotec',
-        iconURL: ev3IconURL,
+        iconURL: robotecImageURL,
         insetIconURL: ev3InsetIconURL,
         description: (
             <FormattedMessage
@@ -236,10 +236,11 @@ export default [
         featured: true,
         disabled: false,
         bluetoothRequired: true,
+        internetConnectionRequired: true,
         launchPeripheralConnectionFlow: true,
         useAutoScan: false,
-        peripheralImage: ev3ConnectionIconURL,
-        smallPeripheralImage: ev3ConnectionSmallIconURL,
+        connectionIconURL: ev3ConnectionIconURL,
+        connectionSmallIconURL: ev3ConnectionSmallIconURL,
         connectingMessage: (
             <FormattedMessage
                 defaultMessage="Connecting. Make sure the pin on your EV3 is set to 1234."
