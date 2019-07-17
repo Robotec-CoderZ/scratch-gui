@@ -154,7 +154,8 @@ class MenuBar extends React.Component {
             'handleLanguageMouseUp',
             'handleRestoreOption',
             'handleSaveToComputer',
-            'restoreOptionMessage'
+            'restoreOptionMessage',
+            'handleClickDownloadFile'
         ]);
     }
     componentDidMount () {
@@ -180,6 +181,38 @@ class MenuBar extends React.Component {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }
         this.props.onRequestCloseFile();
+    }
+    handleClickDownloadFile () {
+        const blocksData = this.props.vm.toJSON();
+
+        // console.log('blocks json', blocksData);
+
+        const serverApi = 'http://52.58.158.239:1234';
+
+        const options = {
+            method: 'post',
+            body: JSON.stringify({js: blocksData}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        fetch(serverApi, options)
+            .then(dta => dta.json())
+            .then(responce => {
+                console.log('responce', responce);
+
+                if (responce) {
+                    const link = document.createElement('a');
+                    link.href = `data:lego-Untitled.uf2;base64,${responce.data}`;
+                    link.target = '_blank';
+                    link.download = 'lego-Untitled.uf2';
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            });
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -665,6 +698,15 @@ class MenuBar extends React.Component {
                                     </Button>
                                 </a>
                             </div>
+                            <React.Fragment>
+                                <Button
+                                    className={classNames(styles.menuBarItem)}
+                                    iconSrc={remixIcon}
+                                    onClick={this.handleClickDownloadFile}
+                                >
+                                    Load uf2 file
+                                </Button>
+                            </React.Fragment>
                             {this.props.showComingSoon ? (
                                 <React.Fragment>
                                     <MenuBarItemTooltip id="mystuff">
