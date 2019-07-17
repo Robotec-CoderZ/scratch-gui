@@ -187,7 +187,7 @@ class MenuBar extends React.Component {
 
         // console.log('blocks json', blocksData);
 
-        const serverApi = 'http://52.58.158.239:1234';
+        const serverApi = 'https://scratch3.gocoderz.com';
 
         const options = {
             method: 'post',
