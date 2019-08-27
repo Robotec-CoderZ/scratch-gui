@@ -185,13 +185,13 @@ class MenuBar extends React.Component {
     handleClickDownloadFile () {
         const blocksData = this.props.vm.toJSON();
 
-        // console.log('blocks json', blocksData);
+        const programName = window.prompt('Please enter program name', 'Untitled');
 
         const serverApi = 'https://scratch3.gocoderz.com';
 
         const options = {
             method: 'post',
-            body: JSON.stringify({js: blocksData}),
+            body: JSON.stringify({js: blocksData, programName}),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -204,9 +204,9 @@ class MenuBar extends React.Component {
 
                 if (responce) {
                     const link = document.createElement('a');
-                    link.href = `data:lego-Untitled.uf2;base64,${responce.data}`;
+                    link.href = `data:lego-${programName || 'Untitled'}.uf2;base64,${responce.data}`;
                     link.target = '_blank';
-                    link.download = 'lego-Untitled.uf2';
+                    link.download = `lego-${programName || 'Untitled'}.uf2`;
 
                     document.body.appendChild(link);
                     link.click();
@@ -704,7 +704,11 @@ class MenuBar extends React.Component {
                                     iconSrc={remixIcon}
                                     onClick={this.handleClickDownloadFile}
                                 >
-                                    Load uf2 file
+                                    <FormattedMessage
+                                        defaultMessage="Download to Robot"
+                                        description="Download to Robot button"
+                                        id="gui.menuBar.downloadToRobot"
+                                    />
                                 </Button>
                             </React.Fragment>
                             {this.props.showComingSoon ? (
