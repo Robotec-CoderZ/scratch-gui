@@ -158,6 +158,7 @@ class MenuBar extends React.Component {
             'handleClickDownloadFile',
             'restoreOptionMessage'
         ]);
+        this.state = {isDownloadProgram: false};
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
@@ -183,9 +184,11 @@ class MenuBar extends React.Component {
     handleClickDownloadFile () {
         const blocksData = this.props.vm.toJSON();
 
-        const programName = window.prompt('Please enter program name', 'Untitled');
+        let programName = window.prompt('Please enter program name', 'Untitled');
 
         const serverApi = 'https://scratch3.gocoderz.com';
+
+        if (programName === '') programName = 'Untitled';
 
         const options = {
             method: 'post',
@@ -195,12 +198,17 @@ class MenuBar extends React.Component {
             }
         };
 
+        this.setState({isDownloadProgram: true});
         fetch(serverApi, options)
-            .then(dta => dta.json())
-            .then(responce => {
-                console.log('responce', responce);
+            .then(dta => {
+                this.setState({isDownloadProgram: false});
+                dta.json().then(responce => {
+                    console.log('responce', responce);
 
-                if (responce) {
+                    if (responce.statusCode === 400) {
+                        window.alert(`Oopsy doopsy.\n${responce.message}`);
+                        return;
+                    }
                     const link = document.createElement('a');
                     link.href = `data:lego-${programName || 'Untitled'}.uf2;base64,${responce.data}`;
                     link.target = '_blank';
@@ -209,8 +217,10 @@ class MenuBar extends React.Component {
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                }
+
+                });
             });
+
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -679,8 +689,8 @@ class MenuBar extends React.Component {
                     ) : (
                         // ******** no login session is available, so don't show login stuff
                         <React.Fragment>
-                            
-                            <React.Fragment>
+
+                            {!this.state.isDownloadProgram && <React.Fragment>
                                 <Button
                                     className={classNames(styles.menuBarItem)}
                                     iconSrc={remixIcon}
@@ -693,6 +703,7 @@ class MenuBar extends React.Component {
                                     />
                                 </Button>
                             </React.Fragment>
+                            }
                             {this.props.showComingSoon ? (
                                 <React.Fragment>
                                     <MenuBarItemTooltip id="mystuff">
