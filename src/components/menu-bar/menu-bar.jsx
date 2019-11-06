@@ -29,6 +29,8 @@ import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
+import Modal from '../../containers/modal.jsx';
+import Input from '../forms/input.jsx';
 
 import {openTipsLibrary} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
@@ -84,6 +86,11 @@ const ariaMessages = defineMessages({
         id: 'gui.menuBar.tutorialsLibrary',
         defaultMessage: 'Tutorials',
         description: 'accessibility text for the tutorials button'
+    },
+    modalLabel: {
+        id: 'gui.modal.saveProjectModal',
+        defaultMessage: 'Save program',
+        description: 'label text of modal'
     }
 });
 
@@ -156,9 +163,12 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'handleClickDownloadFile',
+            'handleCloseSaveModal',
+            'handleChangeProgName',
+            'handleDownloadFileBtn',
             'restoreOptionMessage'
         ]);
-        this.state = {isDownloadProgram: false};
+        this.state = {isDownloadProgram: false, isModalOpen: false, programName: 'Untitled', saveError: null};
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
@@ -181,14 +191,33 @@ class MenuBar extends React.Component {
         }
         this.props.onRequestCloseFile();
     }
+    handleCloseSaveModal () {
+        this.setState({isModalOpen: false});
+        this.setState({saveError: null});
+    }
     handleClickDownloadFile () {
+        this.setState({isModalOpen: true});
+        
+    }
+    handleChangeProgName ({target: {value}}) {
+        this.setState({programName: value});
+        this.setState({saveError: null});
+    }
+    handleDownloadFileBtn () {
+        this.setState({saveError: null});
+
+        const {programName} = this.state;
+
+        const nameRegEx = /^[A-Za-z]+[A-Za-z\d\s\-_]*$/g;
+
+        if (!nameRegEx.test(programName)) {
+            this.setState({saveError: 'Wrong program name'});
+            return;
+        }
+
         const blocksData = this.props.vm.toJSON();
 
-        let programName = window.prompt('Please enter program name', 'Untitled');
-
         const serverApi = 'https://scratch3.gocoderz.com';
-
-        if (programName === '') programName = 'Untitled';
 
         const options = {
             method: 'post',
@@ -203,10 +232,8 @@ class MenuBar extends React.Component {
             .then(dta => {
                 this.setState({isDownloadProgram: false});
                 dta.json().then(responce => {
-                    console.log('responce', responce);
-
                     if (responce.statusCode === 400) {
-                        window.alert(`Oopsy doopsy.\n${responce.message}`);
+                        this.setState({saveError: `Oopsy doopsy.\n${responce.message}`});
                         return;
                     }
                     const link = document.createElement('a');
@@ -217,10 +244,8 @@ class MenuBar extends React.Component {
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-
                 });
             });
-
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -564,7 +589,7 @@ class MenuBar extends React.Component {
                                                 onClick={() => {
                                                     this.handleClickShare(waitForUpdate);
                                                 }}
-                                                /* eslint-enable react/jsx-no-bind */
+                                            /* eslint-enable react/jsx-no-bind */
                                             />
                                         )
                                     }
@@ -591,7 +616,7 @@ class MenuBar extends React.Component {
                                                 onClick={() => {
                                                     this.handleClickSeeCommunity(waitForUpdate);
                                                 }}
-                                                /* eslint-enable react/jsx-no-bind */
+                                            /* eslint-enable react/jsx-no-bind */
                                             />
                                         )
                                     }
@@ -646,8 +671,8 @@ class MenuBar extends React.Component {
                                 />
                             </React.Fragment>
                         ) : (
-                            // ********* user not logged in, but a session exists
-                            // ********* so they can choose to log in
+                        // ********* user not logged in, but a session exists
+                        // ********* so they can choose to log in
                             <React.Fragment>
                                 <div
                                     className={classNames(
@@ -687,12 +712,66 @@ class MenuBar extends React.Component {
                             </React.Fragment>
                         )
                     ) : (
-                        // ******** no login session is available, so don't show login stuff
+                    // ******** no login session is available, so don't show login stuff
                         <React.Fragment>
 
-                            {!this.state.isDownloadProgram && <React.Fragment>
+
+                            {this.state.isModalOpen &&
+                                <Modal
+                                    className={styles.modalContent}
+                                    contentLabel={this.props.intl.formatMessage(ariaMessages.modalLabel)}
+                                    id="saveModal"
+                                    onRequestClose={this.handleCloseSaveModal}
+                                >
+                                    <Box>
+                                    
+                                        <label>
+                                            <FormattedMessage
+                                                defaultMessage="Program name"
+                                                description="setp rogram name"
+                                                id="gui.menuBar.programName"
+                                            />
+                                            <Input
+                                                value={this.state.programName}
+                                                onChange={this.handleChangeProgName}
+                                            />
+                                        </label>
+                                      
+                                        <Box>
+                                            {this.state.saveError &&
+                                                <p style={{color: 'red'}}>{this.state.saveError}</p>
+                                            }
+                                        </Box>
+
+                                        <Button
+                                            className={classNames(styles.menuBarItem)}
+                                            disabled={this.state.isDownloadProgram}
+                                            iconSrc={remixIcon}
+                                            onClick={this.handleDownloadFileBtn}
+                                        >
+                                            <FormattedMessage
+                                                defaultMessage="Download program"
+                                                description="Download program button"
+                                                id="gui.menuBar.downloadProgram"
+                                            />
+                                        </Button>
+
+                                        {this.state.isDownloadProgram && <FormattedMessage
+                                            defaultMessage="Downloading"
+                                            description="Download program text"
+                                            id="gui.menuBar.downloadingProgram"
+                                        />}
+
+                                    </Box>
+
+                                </Modal>
+                            }
+
+
+                            <React.Fragment>
                                 <Button
                                     className={classNames(styles.menuBarItem)}
+                                    disabled={this.state.isDownloadProgram}
                                     iconSrc={remixIcon}
                                     onClick={this.handleClickDownloadFile}
                                 >
@@ -703,7 +782,6 @@ class MenuBar extends React.Component {
                                     />
                                 </Button>
                             </React.Fragment>
-                            }
                             {this.props.showComingSoon ? (
                                 <React.Fragment>
                                     <MenuBarItemTooltip id="mystuff">
@@ -817,7 +895,7 @@ MenuBar.propTypes = {
 
 MenuBar.defaultProps = {
     logo: scratchLogo,
-    onShare: () => {}
+    onShare: () => { }
 };
 
 const mapStateToProps = (state, ownProps) => {
