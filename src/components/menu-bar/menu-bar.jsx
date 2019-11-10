@@ -723,46 +723,59 @@ class MenuBar extends React.Component {
                                     id="saveModal"
                                     onRequestClose={this.handleCloseSaveModal}
                                 >
-                                    <Box>
+                                    <Box style={{backgroundColor: '#fff'}}>
+                                        <Box className={styles.mainModalElm}>
                                     
-                                        <label>
-                                            <FormattedMessage
-                                                defaultMessage="Program name"
-                                                description="setp rogram name"
-                                                id="gui.menuBar.programName"
-                                            />
-                                            <Input
-                                                value={this.state.programName}
-                                                onChange={this.handleChangeProgName}
-                                            />
-                                        </label>
+                                            <Box className={styles.modalMainBox}>
+                                                <label>
+                                                    <FormattedMessage
+                                                        defaultMessage="Program name"
+                                                        description="setp rogram name"
+                                                        id="gui.menuBar.programName"
+                                                    />
+                                                    <Input
+                                                        style={{marginLeft: '20px'}}
+                                                        value={this.state.programName}
+                                                        onChange={this.handleChangeProgName}
+                                                    />
+                                                </label>
                                       
-                                        <Box>
-                                            {this.state.saveError &&
-                                                <p style={{color: 'red'}}>{this.state.saveError}</p>
-                                            }
+                                                <Box>
+                                                    {this.state.saveError &&
+                                                    <p style={{color: 'red'}}>{this.state.saveError}</p>
+                                                    }
+                                                </Box>
+
+                                            </Box>
+                                            
+
                                         </Box>
+                                       
 
-                                        <Button
-                                            className={classNames(styles.menuBarItem)}
-                                            disabled={this.state.isDownloadProgram}
-                                            iconSrc={remixIcon}
-                                            onClick={this.handleDownloadFileBtn}
-                                        >
-                                            <FormattedMessage
-                                                defaultMessage="Download program"
-                                                description="Download program button"
-                                                id="gui.menuBar.downloadProgram"
-                                            />
-                                        </Button>
-
-                                        {this.state.isDownloadProgram && <FormattedMessage
-                                            defaultMessage="Downloading"
-                                            description="Download program text"
-                                            id="gui.menuBar.downloadingProgram"
-                                        />}
+                                        <Box className={styles.modalButtons}>
+                                            <Button
+                                                className={classNames(styles.modalButton)}
+                                                disabled={this.state.isDownloadProgram}
+                                                iconSrc={remixIcon}
+                                                onClick={this.handleDownloadFileBtn}
+                                            >
+                                                {this.state.isDownloadProgram && <FormattedMessage
+                                                    defaultMessage="Downloading"
+                                                    description="Download program text"
+                                                    id="gui.menuBar.downloadingProgram"
+                                                />}
+                                                {!this.state.isDownloadProgram && <FormattedMessage
+                                                    defaultMessage="Download program"
+                                                    description="Download program button"
+                                                    id="gui.menuBar.downloadProgram"
+                                                />
+                                                }
+                                            </Button>
+                                        </Box>
+                                      
 
                                     </Box>
+
 
                                 </Modal>
                             }
