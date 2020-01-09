@@ -237,9 +237,9 @@ class MenuBar extends React.Component {
                         return;
                     }
                     const link = document.createElement('a');
-                    link.href = `data:lego-${programName || 'Untitled'}.uf2;base64,${responce.data}`;
+                    link.href = `data:lego-${programName || 'Untitled'}.zip;base64,${responce.data}`;
                     link.target = '_blank';
-                    link.download = `lego-${programName || 'Untitled'}.uf2`;
+                    link.download = `lego-${programName || 'Untitled'}.zip`;
 
                     document.body.appendChild(link);
                     link.click();
